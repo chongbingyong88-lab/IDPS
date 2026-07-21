@@ -6,9 +6,12 @@ findings. No slides needed; the dashboard and the terminal are the demo.
 
 ## Before class (backup plan included)
 
-1. `npm run dev` in the repo root → check http://localhost:3000 loads.
+1. `npm run dev` in the repo root → check http://localhost:3000 loads, and that
+   the **UNSW-NB15 Replay panel** is present (needs `data/unsw-replay.json`,
+   which is committed).
 2. `cd ml` and confirm `python run_pipeline.py --fast` works (~2 min) — this is
-   your "prove it runs live" fallback.
+   your "prove it runs live" fallback. If you re-run it, also run
+   `python export_replay.py` to refresh the replay panel's flows.
 3. Keep `ml/results/figures/` open in Explorer — if anything breaks, the full
    set of pre-generated figures and `results/metrics.json` are your backup demo.
 
@@ -43,20 +46,32 @@ it runs, in this order (it mirrors Figures 3.2 in the report):
   **Interesting finding**: that's partly a dataset artifact (different simulation
   hosts), which is exactly why we don't trust the ML model alone → hybrid.
 
-**4. Live hybrid system (2.5 min) — dashboard.** http://localhost:3000:
+**4. Dataset driving the dashboard — the integration (2 min) — dashboard.**
+http://localhost:3000:
 
 - Point out the **Offline Benchmark panel** — the Python results rendered live.
-- Launch **Port Scan** → watch alerts fire (signature rule: distinct-ports
-  window), source IP gets auto-blocked (IPS).
+- Scroll to the **UNSW-NB15 Replay panel** and click **Replay dataset**. This is
+  the headline of the integration: **real held-out UNSW-NB15 test flows stream
+  through the trained XGBoost model**, one at a time. Each row shows the flow's
+  actual family vs the model's ATTACK/BENIGN verdict and its P(attack); the ✓/✗
+  marks correct/incorrect calls. The accuracy/precision/recall/FPR tiles update
+  live and **converge to the 92 % / 11 %-FPR benchmark** as flows accumulate —
+  proving the dashboard numbers come from the model classifying genuine data, not
+  a canned figure. Say: *"the dataset itself is now driving the dashboard."*
+
+**5. Live hybrid IDPS + prevention (1.5 min) — dashboard.**
+
+- Launch **Port Scan** → alerts fire (signature rule: distinct-ports window),
+  source IP gets auto-blocked (IPS — the *prevention* in IDPS).
 - Launch **Zero-Day** → no signature exists; the anomaly engine catches it from
-  baseline deviation. This is the headline: *behavior beats signatures*.
-- Show the metric cards: precision ~99 %, FPR ~0.3 % — versus the benchmark's
-  11 % FPR. **The ensemble + suspicious tier is what makes ML operational.**
+  baseline deviation. *Behavior beats signatures.*
+- Metric cards: precision ~99 %, FPR ~0.3 % — versus the benchmark's 11 % FPR.
+  **The ensemble + suspicious tier is what makes ML operational.**
 - Toggle Prevention off → alerts continue but no blocking (IDS vs IPS mode).
 
-**5. Close (30 s).** Both tracks confirm Assignment 1's hypothesis; limitations
-(TTL artifact, 2015 dataset, no adversarial testing) and future work (replay
-benchmark flows through the live engine, continual learning).
+**6. Close (30 s).** Both tracks confirm Assignment 1's hypothesis; limitations
+(TTL artifact, 2015 dataset, no adversarial testing) and future work (online
+retraining on the streamed flows, continual learning).
 
 ## Likely questions & answers
 
@@ -75,6 +90,15 @@ benchmark flows through the live engine, continual learning).
 - **How does the ensemble decide?** Priority ladder: signature+anomaly agree →
   hybrid (highest confidence); signature only; anomaly only (possible zero-day);
   suspicious tier for borderline; else benign and the packet trains the baseline.
+- **Is the dashboard actually running your trained model?** The **Replay panel**
+  streams the trained XGBoost model's *pre-computed* verdicts on the real
+  held-out test flows (exported by `export_replay.py` to
+  `data/unsw-replay.json`), and recomputes the metrics live — so yes, the numbers
+  come from the model classifying genuine dataset flows. The scikit-learn model
+  can't execute *inside* the browser, so inference runs in Python and the
+  verdicts are replayed; the separate live hybrid engine (`lib/idps/engine.ts`)
+  is what classifies the synthetic stream in real time. Two models, one dashboard.
 - **Model files?** `ml/results/models/*.joblib`; metrics in
-  `ml/results/metrics.json`; every figure regenerates via
-  `python run_pipeline.py` + `python make_dataset_figures.py`.
+  `ml/results/metrics.json`; replay flows in `data/unsw-replay.json`; regenerate
+  via `python run_pipeline.py`, `python make_dataset_figures.py`,
+  `python export_replay.py`.

@@ -10,6 +10,7 @@ import { EnginePanel } from './engine-panel'
 import { PacketLog } from './packet-log'
 import { StatCards } from './stat-cards'
 import { TrafficChart } from './traffic-chart'
+import { UnswReplayPanel } from './unsw-replay-panel'
 
 export function IdpsDashboard() {
   const {
@@ -45,6 +46,7 @@ export function IdpsDashboard() {
           <TrafficChart data={chart} />
           <EnginePanel metrics={metrics} attackDist={attackDist} />
           <BenchmarkPanel />
+          <UnswReplayPanel />
           <PacketLog log={log} />
         </div>
         <div className="flex flex-col gap-4">

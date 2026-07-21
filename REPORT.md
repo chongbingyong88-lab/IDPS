@@ -186,6 +186,8 @@ Evaluation was performed with an offline harness (`scripts/evaluate.ts`): 10 ind
 
 In the live dashboard, these results are visualized as a real-time stacked area chart of traffic composition, live accuracy/precision/recall stat cards, an attack-type distribution chart, an explainable alert feed, and the active IPS blocklist.
 
+**Integration — the dataset drives the dashboard.** To connect the two tracks, the trained XGBoost model classifies the genuine held-out UNSW-NB15 test flows offline (`ml/export_replay.py`), and the dashboard's **UNSW-NB15 Replay panel** (`components/idps/unsw-replay-panel.tsx`) streams those real flows one at a time. Each row shows the flow's true attack family against the model's ATTACK/BENIGN verdict and its P(attack); the accuracy, precision, recall and false-positive-rate tiles recompute live and converge to the offline benchmark (≈92% accuracy, ≈11% FPR) as flows accumulate. This makes the reported numbers demonstrably the output of the trained model classifying real data, rather than a static figure. (The scikit-learn model cannot execute inside a browser, so inference runs in Python and the per-flow verdicts are replayed; the separate hybrid engine classifies the synthetic stream in real time — two models presented in one dashboard.)
+
 ### 3.3 Results Commentary and Analysis
 
 #### 3.3.A Benchmark analysis (UNSW-NB15)

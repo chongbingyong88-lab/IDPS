@@ -15,6 +15,7 @@ pip install -r requirements.txt
 python download_data.py        # fetches UNSW_NB15.csv (~32 MB) into ml/data/
 python run_pipeline.py         # full run (~5–10 min)
 python make_dataset_figures.py # dataset-explanation figures (fig10–fig14)
+python export_replay.py        # trained-model verdicts on real test flows → dashboard
 # python run_pipeline.py --fast  # quick smoke test (~2 min)
 ```
 
@@ -42,6 +43,10 @@ python make_dataset_figures.py # dataset-explanation figures (fig10–fig14)
   correlation
 - `../data/benchmark-results.json` — trimmed copy rendered by the dashboard's
   **Offline Benchmark** panel (`components/idps/benchmark-panel.tsx`)
+- `../data/unsw-replay.json` — the trained XGBoost model's verdicts on ~1,500
+  real held-out test flows (`export_replay.py`), streamed by the dashboard's
+  **UNSW-NB15 Replay** panel (`components/idps/unsw-replay-panel.tsx`); metrics
+  recompute live and converge to the benchmark
 
 ## Dataset
 

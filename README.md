@@ -13,8 +13,10 @@ The project has two complementary components:
 | **Real-time hybrid IDPS dashboard** | Next.js app (this repo root) | Hybrid detection in action: signature rules + online statistical ML anomaly detection + ensemble fusion, with automatic IP blocking (prevention), live metrics, and an explainable alert feed |
 
 The dashboard's **Offline Benchmark panel** renders the results produced by the
-Python pipeline (`data/benchmark-results.json`), so both components are visible
-in a single live demo.
+Python pipeline (`data/benchmark-results.json`), and the **UNSW-NB15 Replay
+panel** streams the trained XGBoost model's verdicts on the real held-out test
+flows (`data/unsw-replay.json`) with metrics recomputing live — so the dataset
+itself drives the dashboard, and both components are visible in a single demo.
 
 ## Setup on a new computer (first time)
 
@@ -73,7 +75,9 @@ lib/idps/engine.ts      hybrid detection engine (signatures + online anomaly ML)
 lib/idps/traffic.ts     labeled synthetic traffic generator
 scripts/evaluate.ts     offline evaluation harness for the hybrid engine
 ml/                     UNSW-NB15 supervised ML benchmark (Python)
+ml/export_replay.py     trained-model verdicts on real test flows → dashboard
 data/benchmark-results.json   benchmark output consumed by the dashboard
+data/unsw-replay.json         real test flows + model verdicts for the replay panel
 REPORT.md               implementation report (markdown mirror)
 ```
 
