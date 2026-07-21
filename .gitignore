@@ -13,3 +13,8 @@ __v0_jsx-dev-runtime.ts
 node_modules
 .next/
 .DS_Store
+
+# ML pipeline artifacts (dataset is re-downloadable; models are large binaries)
+ml/data/
+ml/results/models/
+ml/**/__pycache__/

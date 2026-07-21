@@ -1,33 +1,62 @@
-# IDPS-
+# AI-Driven Intrusion Detection & Prevention System (IDPS)
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+SEC 3044 — Advanced Topics in Computer Security, Assignment 2.
+Practical implementation of the methodology proposed in Assignment 1:
+an AI/ML-based intrusion detection and prevention system evaluated on both a
+**real benchmark dataset (UNSW-NB15)** and a **live traffic simulation**.
 
-## Built with v0
+The project has two complementary components:
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
+| Component | Where | What it demonstrates |
+|---|---|---|
+| **Offline ML benchmark** | [`ml/`](ml/) (Python) | Assignment 1 supervised-learning methodology: UNSW-NB15 preprocessing (clean → encode → normalize → balance → feature-select), Random Forest vs SVM vs XGBoost comparison, full metric suite (accuracy, precision, recall, F1, FPR, ROC-AUC, PR-AUC), per-attack-family breakdown, edge-feasibility measurements (model size, inference latency) and explainability (feature importance + SHAP) |
+| **Real-time hybrid IDPS dashboard** | Next.js app (this repo root) | Hybrid detection in action: signature rules + online statistical ML anomaly detection + ensemble fusion, with automatic IP blocking (prevention), live metrics, and an explainable alert feed |
 
-[Continue working on v0 →](https://v0.app/chat/projects/prj_Xef6jTRMMjPAxtjqUWzQoVq8Qogh)
+The dashboard's **Offline Benchmark panel** renders the results produced by the
+Python pipeline (`data/benchmark-results.json`), so both components are visible
+in a single live demo.
 
-## Getting Started
-
-First, run the development server:
+## Running the dashboard
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Use the attack simulator
+buttons (port scan, SYN flood, SQL injection, brute force, exfiltration,
+zero-day) to inject labeled attack bursts and watch detection/prevention live.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Running the ML benchmark
 
-## Learn More
+```bash
+cd ml
+pip install -r requirements.txt
+python download_data.py     # UNSW-NB15 partition CSV (~32 MB)
+python run_pipeline.py      # trains RF / SVM / XGBoost, writes results + figures
+```
 
-To learn more, take a look at the following resources:
+Outputs land in `ml/results/` (metrics JSON/CSV + report figures) and refresh
+`data/benchmark-results.json` for the dashboard panel. See
+[`ml/README.md`](ml/README.md) for details.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+## Repository layout
+
+```
+app/, components/       Next.js dashboard (view layer only)
+hooks/use-idps.ts       simulation orchestrator (traffic → engine → state)
+lib/idps/engine.ts      hybrid detection engine (signatures + online anomaly ML)
+lib/idps/traffic.ts     labeled synthetic traffic generator
+scripts/evaluate.ts     offline evaluation harness for the hybrid engine
+ml/                     UNSW-NB15 supervised ML benchmark (Python)
+data/benchmark-results.json   benchmark output consumed by the dashboard
+REPORT.md               implementation report (markdown mirror)
+```
+
+## Documentation
+
+- [REPORT.md](REPORT.md) — full implementation report (methodology, results,
+  analysis, limitations)
+- [ml/README.md](ml/README.md) — benchmark pipeline usage and design notes
+- [docs/DEMO-GUIDE.md](docs/DEMO-GUIDE.md) — live-demonstration walkthrough
+  (flow, talking points, backup plan, likely Q&A)

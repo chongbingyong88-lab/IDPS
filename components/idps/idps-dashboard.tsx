@@ -3,6 +3,7 @@
 import { useIdps } from '@/hooks/use-idps'
 import { AlertFeed } from './alert-feed'
 import { AttackSimulator } from './attack-simulator'
+import { BenchmarkPanel } from './benchmark-panel'
 import { BlockedPanel } from './blocked-panel'
 import { DashboardHeader } from './dashboard-header'
 import { EnginePanel } from './engine-panel'
@@ -43,6 +44,7 @@ export function IdpsDashboard() {
         <div className="flex flex-col gap-4 lg:col-span-2">
           <TrafficChart data={chart} />
           <EnginePanel metrics={metrics} attackDist={attackDist} />
+          <BenchmarkPanel />
           <PacketLog log={log} />
         </div>
         <div className="flex flex-col gap-4">
@@ -55,7 +57,8 @@ export function IdpsDashboard() {
       <footer className="border-t border-border pt-4 pb-2 text-center font-mono text-[11px] text-muted-foreground">
         Prototype demonstration — hybrid AI-driven IDPS: signature rules + online
         statistical ML anomaly detection + ensemble fusion with automated
-        prevention. Traffic is simulated.
+        prevention. Live traffic is simulated; benchmark metrics are from
+        supervised models trained on the UNSW-NB15 dataset (ml/run_pipeline.py).
       </footer>
     </main>
   )
