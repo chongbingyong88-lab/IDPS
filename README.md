@@ -16,6 +16,30 @@ The dashboard's **Offline Benchmark panel** renders the results produced by the
 Python pipeline (`data/benchmark-results.json`), so both components are visible
 in a single live demo.
 
+## Setup on a new computer (first time)
+
+> **For the live demo you only need Node.js.** The benchmark results are already
+> committed, so the dashboard shows them without running Python. Python is only
+> needed if you want to *re-run* the ML pipeline.
+
+1. **Install Node.js** (LTS) — <https://nodejs.org>. Required for the dashboard.
+2. **Install Git** — <https://git-scm.com/download/win> (or download this repo as
+   a ZIP from GitHub instead of cloning).
+3. **Install Python 3.12** — <https://www.python.org/downloads> — *only if you
+   will re-run the ML pipeline*. Tick **“Add Python to PATH”** during install.
+4. **Get the code:**
+   ```bash
+   git clone https://github.com/chongbingyong88-lab/IDPS.git
+   cd IDPS
+   ```
+5. **Install dashboard dependencies** (first time only):
+   ```bash
+   npm install
+   ```
+
+Then follow *Running the dashboard* below. To also re-run the benchmark, do the
+one-time `pip install` in *Running the ML benchmark*.
+
 ## Running the dashboard
 
 ```bash
@@ -31,8 +55,8 @@ zero-day) to inject labeled attack bursts and watch detection/prevention live.
 
 ```bash
 cd ml
-pip install -r requirements.txt
-python download_data.py     # UNSW-NB15 partition CSV (~32 MB)
+pip install -r requirements.txt   # add --user if it errors on permissions
+python download_data.py     # UNSW-NB15 partition CSV (~32 MB) — dataset is not committed
 python run_pipeline.py      # trains RF / SVM / XGBoost, writes results + figures
 ```
 
